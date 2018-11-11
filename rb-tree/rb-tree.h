@@ -9,6 +9,8 @@ struct RBTree {
 
 		Node(const int key, const bool black = false);
 
+		void PrintInorder(bool root = false) const;
+
 		// Returns new root
 		inline Node *rotate(bool right)
 		{
@@ -33,6 +35,8 @@ struct RBTree {
 	Node *root;
 
 	RBTree();
+
+	void Print() const;
 };
 
 #endif
