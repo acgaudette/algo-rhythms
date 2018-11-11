@@ -8,6 +8,26 @@ struct RBTree {
 		int key;
 
 		Node(const int key, const bool black = false);
+
+		// Returns new root
+		inline Node *rotate(bool right)
+		{
+			Node *swap = child[!right];
+
+			// Switch sides of grandchild
+			child[!right] = swap->child[right];
+			swap->child[right] = this; // Move new root up
+
+			return swap;
+		}
+
+		// Rotate child opposite input direction to inline,
+		// then rotate self the other way.
+		inline Node *rotate2(bool right)
+		{
+			child[!right] = child[!right]->rotate(!right);
+			return rotate(right);
+		}
 	};
 
 	Node *root;
