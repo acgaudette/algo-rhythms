@@ -138,15 +138,10 @@ BST::Node *BST::Find(const int key) const
 {
 	Node *current = root;
 
-	while (current != nullptr) {
-		if (key == current->key)
-			return current;
+	while (current && key != current->key)
+		current = current->child[key > current->key];
 
-		current = key < current->key ?
-			current->left : current->right;
-	}
-
-	return nullptr;
+	return current;
 }
 
 void BST::Print() const
