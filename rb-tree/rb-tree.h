@@ -34,6 +34,11 @@ struct RBTree {
 
 	Node *root;
 
+	static inline bool is_black(Node *node)
+	{
+		return node == nullptr || node->black;
+	}
+
 	RBTree();
 
 	void Print() const;
