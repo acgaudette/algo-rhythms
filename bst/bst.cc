@@ -150,6 +150,21 @@ void BST::Remove(const int key)
 	delete next;
 }
 
+BST::Node *BST::Find(const int key) const
+{
+	Node *current = root;
+
+	while (current != nullptr) {
+		if (key == current->key)
+			return current;
+
+		current = key < current->key ?
+			current->left : current->right;
+	}
+
+	return nullptr;
+}
+
 void BST::Print() const
 {
 	if (root == nullptr)
