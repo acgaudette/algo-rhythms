@@ -50,6 +50,7 @@ struct RBTree {
 	~RBTree();
 
 	void Insert(const int key);
+	void Remove(const int key);
 	Node *Find(const int key) const;
 	size_t Count() const;
 	void Print() const;

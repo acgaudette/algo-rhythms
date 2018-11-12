@@ -217,6 +217,181 @@ void RBTree::Insert(const int key)
 #endif
 }
 
+void RBTree::Remove(const int key)
+{
+#ifdef DEBUG
+	printf("Removing %d...\n", key);
+	size_t prev_count = Count();
+#endif
+
+	Node *current = root;
+
+	if (current == nullptr)
+		return;
+
+	// Create dummy head for root rotations
+	Node head(0);
+	head.child[1] = root;
+
+	Node *parent[2] = { &head, nullptr };
+	Node *target = nullptr;
+
+	bool right[2] = { true, false };
+
+	do {
+		right[1] = right[0];
+
+		// Defaults to true after key is found;
+		// leads to inorder predecessor.
+		right[0] = key > current->key;
+
+		/* Attempt to push red nodes down from the root */
+
+		bool inline_black = is_black(current)
+			&& is_black(current->child[right[0]]);
+
+		if (!inline_black)
+			goto CONTINUE;
+
+		// All three are black
+		if (is_black(current->child[!right[0]])) {
+			Node *sibling = parent[0]->child[!right[1]];
+
+			// If there is no sibling, do nothing.
+			if (sibling == nullptr)
+				goto CONTINUE;
+
+			// Get the children of the sibling
+			Node *child_0 = sibling->child[ right[1]];
+			Node *child_1 = sibling->child[!right[1]];
+
+			// If all children are black, do a color flip
+			// (the reverse of insert case 1).
+			if (is_black(child_0) && is_black(child_1)) {
+#ifdef DEBUG
+				printf("Fixup: Case 1\n");
+#endif
+				// "Push" the red node from the parent
+				// into the current node and its sibling.
+				parent[0]->black = true;
+				sibling->black = false;
+				current->black = false;
+			} else {
+				bool side = parent[1]->child[1] == parent[0];
+				Node *new_parent;
+
+				// Sibling child is inline;
+				// rotate it towards the current node.
+				if (!is_black(child_1)) {
+#ifdef DEBUG
+					printf("Fixup: Case 4\n");
+#endif
+					new_parent // Rotate parent
+						= parent[0]->rotate(right[1]);
+
+					// Update grandparent's child pointer
+					parent[1]->child[side]
+						= new_parent;
+				}
+
+				// Sibling child is not inline;
+				// make it inline and then rotate around.
+				else { // child_0 must be red
+#ifdef DEBUG
+					printf("Fixup: Case 3 -> Case 4\n");
+#endif
+					new_parent
+						= parent[0]->rotate2(right[1]);
+					parent[1]->child[side]
+						= new_parent;
+				}
+
+				// Recolor
+				new_parent->black = false;
+				current->black = false; // Push red down
+				// One of these is parent[0]; both are black
+				new_parent->child[0]->black = true;
+				new_parent->child[1]->black = true;
+			}
+		} else { // The non-inline child is red
+#ifdef DEBUG
+			printf("Fixup: Case 2\n");
+#endif
+			// Rotate the red child inline with the other child
+			// along our direction of movement.
+			Node *new_current = current->rotate(right[0]);
+			parent[0]->child[right[1]] = new_current;
+
+			// Update parent pointer
+			parent[0] = new_current;
+
+			// Recolor
+			current->black = false;
+			new_current->black = true;
+		}
+
+CONTINUE:
+		// We found the node to delete
+		if (current->key == key)
+			target = current;
+
+		parent[1] = parent[0];
+		parent[0] = current;
+
+		current = current->child[right[0]];
+	} while (current);
+
+	/* At this point, parent[0] is the last valid current (a leaf).
+	 * parent[1] is the parent of the leaf.
+	 */
+
+	// Remove or replace target
+	if (target) {
+		// Copy data
+		target->key = parent[0]->key;
+
+		bool right_leaf = parent[0] == parent[1]->child[1];
+
+		/* Works for all cases.
+		 * 1. No children:
+		 *	parent[0] == target (a leaf node; no children)
+		 *	parent[1]'s child pointer to target is cleared
+		 * 2. Two children:
+		 *	parent[0] is target's inorder predecessor (a leaf node)
+		 *	parent[1]'s child pointer to parent[0] is cleared
+		 * 3. One child:
+		 *	parent[0] is either equal to target or its predecessor
+		 *	a. parent[0] == target:
+		 *		The right tree is moved up
+		 *	b. parent[0] is target's inorder predecessor
+		 *		The left tree is moved up
+		 */
+
+		bool right_child = parent[0]->child[0] == nullptr;
+		parent[1]->child[right_leaf] = parent[0]->child[right_child];
+		delete parent[0];
+	}
+
+	// Fix root
+	root = head.child[1];
+	if (root)
+		root->black = true;
+
+#ifdef DEBUG
+	Print();
+
+	if (Find(key))
+		printf("Invalid: Remove not successful\n");
+
+	size_t count = Count();
+	if (count != prev_count - 1 && count != prev_count)
+		printf("Invalid: Remove count is incorrect\n");
+
+	Validate();
+	printf("\n");
+#endif
+}
+
 RBTree::Node *RBTree::Find(const int key) const
 {
 	Node *current = root;
