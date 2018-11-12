@@ -47,6 +47,19 @@ size_t RBTree::Node::ValidatePostorder() const
 	return size_l + black;
 }
 
+RBTree::Node *RBTree::Copy(Node *node)
+{
+	if (node == nullptr)
+		return nullptr;
+
+	Node *copy = new Node(node->key, node->black);
+
+	copy->child[0] = Copy(node->child[0]);
+	copy->child[1] = Copy(node->child[1]);
+
+	return copy;
+}
+
 void RBTree::Cleanup(Node *node)
 {
 	if (node == nullptr)
@@ -59,6 +72,11 @@ void RBTree::Cleanup(Node *node)
 }
 
 RBTree::RBTree(): root(nullptr) {}
+
+RBTree::RBTree(const RBTree &other)
+{
+	root = Copy(other.root);
+}
 
 RBTree::~RBTree()
 {

@@ -42,8 +42,10 @@ struct RBTree {
 	}
 
 	static void Cleanup(Node *node);
+	static Node *Copy(Node *node);
 
 	RBTree();
+	RBTree(const RBTree &other); // Copy constructor
 	~RBTree();
 
 	size_t Count() const;
