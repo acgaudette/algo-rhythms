@@ -16,7 +16,23 @@ void RBTree::Node::PrintInorder(bool root) const
 		child[1]->PrintInorder();
 }
 
+void RBTree::Cleanup(Node *node)
+{
+	if (node == nullptr)
+		return;
+
+	Cleanup(node->child[0]);
+	Cleanup(node->child[1]);
+
+	delete node;
+}
+
 RBTree::RBTree(): root(nullptr) {}
+
+RBTree::~RBTree()
+{
+	Cleanup(root);
+}
 
 void RBTree::Print() const
 {

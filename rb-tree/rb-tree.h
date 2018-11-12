@@ -39,7 +39,10 @@ struct RBTree {
 		return node == nullptr || node->black;
 	}
 
+	static void Cleanup(Node *node);
+
 	RBTree();
+	~RBTree();
 
 	void Print() const;
 };
