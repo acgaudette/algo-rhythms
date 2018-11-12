@@ -88,6 +88,16 @@ RBTree::~RBTree()
 	Cleanup(root);
 }
 
+RBTree::Node *RBTree::Find(const int key) const
+{
+	Node *current = root;
+
+	while (current && key != current->key)
+		current = current->child[key > current->key];
+
+	return current;
+}
+
 size_t RBTree::Count() const
 {
 	return root ? root->Count() : 0;

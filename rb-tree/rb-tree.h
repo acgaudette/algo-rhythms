@@ -49,6 +49,7 @@ struct RBTree {
 	RBTree(RBTree &&other); // Move constructor
 	~RBTree();
 
+	Node *Find(const int key) const;
 	size_t Count() const;
 	void Print() const;
 	void Validate() const;
