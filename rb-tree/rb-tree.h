@@ -9,6 +9,7 @@ struct RBTree {
 
 		Node(const int key, const bool black = false);
 
+		size_t Count() const;
 		void PrintInorder(bool root = false) const;
 
 		// Returns new root
@@ -44,6 +45,7 @@ struct RBTree {
 	RBTree();
 	~RBTree();
 
+	size_t Count() const;
 	void Print() const;
 
 private:
