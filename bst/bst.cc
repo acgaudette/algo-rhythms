@@ -2,19 +2,17 @@
 #include "bst.h"
 
 BST::Node::Node(const int key):
-	left(nullptr), right(nullptr), key(key) {}
+	child { nullptr, nullptr }, key(key) {}
 
 void BST::Node::PrintInorder() const
 {
-	if (left != nullptr) {
-		left->PrintInorder();
-	}
+	if (child[0])
+		child[0]->PrintInorder();
 
 	printf("%d ", key);
 
-	if (right != nullptr) {
-		right->PrintInorder();
-	}
+	if (child[1])
+		child[1]->PrintInorder();
 }
 
 void BST::Cleanup(Node *node)
@@ -22,8 +20,8 @@ void BST::Cleanup(Node *node)
 	if (node == nullptr)
 		return;
 
-	Cleanup(node->left);
-	Cleanup(node->right);
+	Cleanup(node->child[0]);
+	Cleanup(node->child[1]);
 
 	delete node;
 }
@@ -35,8 +33,8 @@ BST::Node *BST::Copy(Node *node)
 
 	Node *copy = new Node(node->key);
 
-	copy->left = Copy(node->left);
-	copy->right = Copy(node->right);
+	copy->child[0] = Copy(node->child[0]);
+	copy->child[1] = Copy(node->child[1]);
 
 	return copy;
 }

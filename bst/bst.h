@@ -3,8 +3,7 @@
 
 struct BST {
 	struct Node {
-		Node *left;
-		Node *right;
+		Node *child[2];
 		int key;
 
 		Node(const int key);
