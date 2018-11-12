@@ -45,6 +45,10 @@ struct RBTree {
 	~RBTree();
 
 	void Print() const;
+
+private:
+	RBTree &operator=(RBTree &other); // Copy assignment operator
+	RBTree &operator=(RBTree &&other); // Move assignment operator
 };
 
 #endif
