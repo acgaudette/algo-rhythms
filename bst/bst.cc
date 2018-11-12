@@ -90,6 +90,66 @@ void BST::Insert(const int key)
 	}
 }
 
+void BST::Remove(const int key)
+{
+	Node *entry = root;
+	Node *parent = nullptr;
+	bool left = false;
+
+	while (entry != nullptr) {
+		if (key == entry->key)
+			break;
+
+		parent = entry;
+		left = key < entry->key;
+		entry = left ? entry->left : entry->right;
+	}
+
+	if (entry == nullptr)
+		return;
+
+	// Case 1: no children
+	if (entry->left == nullptr && entry->right == nullptr) {
+		if (parent != nullptr) {
+			if (left)
+				parent->left = nullptr;
+			else
+				parent->right = nullptr;
+		}
+
+		delete entry;
+		return;
+	}
+
+	// Case 2: Two children
+	if (entry->left != nullptr && entry->right != nullptr) {
+		// Find inorder predecessor
+		Node *pred = entry->left;
+		parent = entry;
+
+		while (pred->right != nullptr) {
+			parent = pred;
+			pred = pred->right;
+		}
+
+		entry->key = pred->key; // Replace entry
+		parent->left = pred->left; // Potential left child
+
+		delete pred;
+		return;
+	}
+
+	// Case 3: One child
+	Node *next = entry->left == nullptr ?
+		entry->right : entry->left;
+
+	entry->key = next->key;
+	entry->left = next->left;
+	entry->right = next->right;
+
+	delete next;
+}
+
 void BST::Print() const
 {
 	if (root == nullptr)
