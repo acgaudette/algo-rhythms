@@ -86,62 +86,52 @@ void BST::Insert(const int key)
 
 void BST::Remove(const int key)
 {
-	Node *entry = root;
+	Node *current = root;
 	Node *parent = nullptr;
-	bool left = false;
+	bool right = false;
 
-	while (entry != nullptr) {
-		if (key == entry->key)
+	while (current) {
+		if (key == current->key)
 			break;
 
-		parent = entry;
-		left = key < entry->key;
-		entry = left ? entry->left : entry->right;
+		parent = current;
+		right = key > current->key;
+		current = current->child[right];
 	}
 
-	if (entry == nullptr)
+	if (current == nullptr)
 		return;
 
 	// Case 1: no children
-	if (entry->left == nullptr && entry->right == nullptr) {
-		if (parent != nullptr) {
-			if (left)
-				parent->left = nullptr;
-			else
-				parent->right = nullptr;
-		}
+	if (!current->child[0] && !current->child[1]) {
+		if (parent)
+			parent->child[right] = nullptr;
 
-		delete entry;
-		return;
+		return delete current;
 	}
 
 	// Case 2: Two children
-	if (entry->left != nullptr && entry->right != nullptr) {
+	if (current->child[0] && current->child[1]) {
 		// Find inorder predecessor
-		Node *pred = entry->left;
-		parent = entry;
+		Node *pred = current->child[0];
+		parent = current;
 
-		while (pred->right != nullptr) {
+		while (pred->child[1]) {
 			parent = pred;
-			pred = pred->right;
+			pred = pred->child[1];
 		}
 
-		entry->key = pred->key; // Replace entry
-		parent->left = pred->left; // Potential left child
+		current->key = pred->key; // Replace current
+		parent->child[0] = pred->child[0]; // Potential left child
 
-		delete pred;
-		return;
+		return delete pred;
 	}
 
 	// Case 3: One child
-	Node *next = entry->left == nullptr ?
-		entry->right : entry->left;
-
-	entry->key = next->key;
-	entry->left = next->left;
-	entry->right = next->right;
-
-	delete next;
+	right = current->child[1];
+	Node *single = current->child[right];
+	*current = *single;
+	delete single;
 }
 
 BST::Node *BST::Find(const int key) const
