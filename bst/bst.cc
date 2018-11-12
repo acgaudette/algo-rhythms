@@ -68,7 +68,7 @@ void BST::Insert(const int key)
 	Node *parent = nullptr;
 	bool right = false;
 
-	while (current) {
+	do {
 		// Only unique keys are allowed
 		if (key == current->key)
 			return;
@@ -76,7 +76,7 @@ void BST::Insert(const int key)
 		parent = current;
 		right = key > current->key;
 		current = current->child[right];
-	}
+	} while (current);
 
 	current = new Node(key);
 
