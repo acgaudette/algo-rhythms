@@ -46,6 +46,7 @@ struct RBTree {
 
 	RBTree();
 	RBTree(const RBTree &other); // Copy constructor
+	RBTree(RBTree &&other); // Move constructor
 	~RBTree();
 
 	size_t Count() const;

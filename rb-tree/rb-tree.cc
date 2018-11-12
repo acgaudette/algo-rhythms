@@ -78,6 +78,11 @@ RBTree::RBTree(const RBTree &other)
 	root = Copy(other.root);
 }
 
+RBTree::RBTree(RBTree &&other): root(other.root)
+{
+	other.root = nullptr;
+}
+
 RBTree::~RBTree()
 {
 	Cleanup(root);
