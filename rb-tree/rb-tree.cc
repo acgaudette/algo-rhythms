@@ -24,6 +24,29 @@ void RBTree::Node::PrintInorder(bool root) const
 		child[1]->PrintInorder();
 }
 
+size_t RBTree::Node::ValidatePostorder() const
+{
+	size_t size_l = child[0] ? child[0]->ValidatePostorder() : 1;
+	size_t size_r = child[1] ? child[1]->ValidatePostorder() : 1;
+
+	if (size_l != size_r)
+		printf("Invalid: Black height does not match\n");
+
+	if (!black && !is_black(child[0]))
+		printf("Invalid: Left child of red parent is red\n");
+
+	if (!black && !is_black(child[1]))
+		printf("Invalid: Right child of red parent is red\n");
+
+	if (child[0] && child[0]->key >= key)
+		printf("Invalid: Left child has key out of order\n");
+
+	if (child[1] && child[1]->key <= key)
+		printf("Invalid: Right child has key out of order\n");
+
+	return size_l + black;
+}
+
 void RBTree::Cleanup(Node *node)
 {
 	if (node == nullptr)
@@ -54,4 +77,18 @@ void RBTree::Print() const
 
 	root->PrintInorder(true);
 	printf("\n");
+}
+
+void RBTree::Validate() const
+{
+	if (root == nullptr) {
+		return;
+	}
+
+	if (!root->black) {
+		printf("Invalid: Root is red\n");
+		return;
+	}
+
+	root->ValidatePostorder();
 }

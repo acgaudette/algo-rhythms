@@ -11,6 +11,7 @@ struct RBTree {
 
 		size_t Count() const;
 		void PrintInorder(bool root = false) const;
+		size_t ValidatePostorder() const;
 
 		// Returns new root
 		inline Node *rotate(bool right)
@@ -47,6 +48,7 @@ struct RBTree {
 
 	size_t Count() const;
 	void Print() const;
+	void Validate() const;
 
 private:
 	RBTree &operator=(RBTree &other); // Copy assignment operator
